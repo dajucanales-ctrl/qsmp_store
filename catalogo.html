@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QSMP Store - Catálogo Completo</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #fdcb6e;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gray: #b2bec3;
+            --border: #dfe6e9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent);
+        }
+
+        /* BANNER */
+        .page-banner {
+            background: linear-gradient(135deg, var(--dark), #485460);
+            color: white;
+            padding: 2.5rem 5%;
+            text-align: center;
+        }
+
+        /* MAIN LAYOUT (Sidebar + Grid) */
+        .catalog-container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        /* SIDEBAR / FILTROS */
+        .sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .filter-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-list li {
+            margin-bottom: 8px;
+        }
+
+        .category-list label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .price-inputs input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* PRODUCTOS & TOOLBAR */
+        .catalog-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .sort-box select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* GRID PRODUCTOS */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--accent);
+            color: var(--dark);
+            font-weight: bold;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* ESTILO PARA IMÁGENES */
+        .product-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #dfe6e9;
+        }
+
+        .product-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            margin: 5px 0;
+            color: var(--dark);
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .add-btn {
+            background-color: var(--dark);
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .add-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 12px;
+            grid-column: 1 / -1;
+            color: var(--gray);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .catalog-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a onclick="navigateTo('index.html')" class="logo">QSMP STORE 🥚</a>
+        <nav>
+            <a onclick="navigateTo('index.html')">Inicio</a>
+            <a onclick="navigateTo('catalogo.html')" class="active">Catálogo</a>
+            <a onclick="navigateTo('federacion.html')">Federación</a>
+            <a onclick="navigateTo('contacto.html')">Contacto</a>
+        </nav>
+    </header>
+
+    <div class="page-banner">
+        <h1>Catálogo de Productos QSMP</h1>
+        <p>Explora toda la colección oficial y fanmade de la Isla</p>
+    </div>
+
+    <div class="catalog-container">
+
+        <aside class="sidebar">
+            <div class="filter-section">
+                <div class="filter-title">Buscar</div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Nombre de producto..." oninput="filterCatalog()">
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-title">Categorías</div>
+                <ul class="category-list">
+                    <li><label><input type="checkbox" value="ropa" class="category-filter" onchange="filterCatalog()"> Ropa</label></li>
+                    <li><label><input type="checkbox" value="peluches" class="category-filter" onchange="filterCatalog()"> Peluches</label></li>
+                    <li><label><input type="checkbox" value="accesorios" class="category-filter" onchange="filterCatalog()"> Accesorios</label></li>
+                    <li><label><input type="checkbox" value="coleccionables" class="category-filter" onchange="filterCatalog()"> Coleccionables</label></li>
+                </ul>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-title">Rango de Precio ($)</div>
+                <div class="price-inputs">
+                    <input type="number" id="minPrice" placeholder="Mín" oninput="filterCatalog()">
+                    <span>-</span>
+                    <input type="number" id="maxPrice" placeholder="Máx" oninput="filterCatalog()">
+                </div>
+            </div>
+
+            <button class="reset-btn" onclick="resetFilters()">Limpiar Filtros</button>
+        </aside>
+
+        <main class="catalog-content">
+
+            <div class="toolbar">
+                <div id="product-count">Mostrando 0 productos</div>
+                <div class="sort-box">
+                    <label for="sortSelect">Ordenar por: </label>
+                    <select id="sortSelect" onchange="filterCatalog()">
+                        <option value="featured">Destacados</option>
+                        <option value="low-high">Precio: Menor a Mayor</option>
+                        <option value="high-low">Precio: Mayor a Menor</option>
+                        <option value="a-z">Nombre: A - Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="products-grid" id="catalog-grid"></div>
+
+        </main>
+    </div>
+
+    <script>
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        const catalogProducts = [
+            { id: 1, name: "Sudadera con capucha QSMP Original", category: "ropa", price: 45.00, badge: "Popular", image: "Imagenes/img9.webp" },
+            { id: 2, name: "Gorra de Pepino negra QSMP", category: "ropa", price: 22.50, badge: "Nuevo", image: "Imagenes/img10.webp" },
+            { id: 3, name: "Peluche de Cucurucho", category: "peluches", price: 30.00, badge: "", image: "Imagenes/mainpng.webp" },
+            { id: 4, name: "Huevo Coleccionable de Tilín", category: "coleccionables", price: 25.00, badge: "Oferta", image: "Imagenes/img11.webp" },
+            { id: 5, name: "Llavero de Cucurucho", category: "accesorios", price: 15.00, badge: "", image: "Imagenes/img12.webp" },
+            { id: 6, name: "Coleccionable de Bobby", category: "coleccionables", price: 25.00, badge: "Nuevo", image: "Imagenes/img13.webp" },
+            { id: 7, name: "Llavero Dark Cucurucho", category: "accesorios", price: 15.00, badge: "Agotado", image: "Imagenes/img14.webp" },
+            { id: 8, name: "Sudadera Oficial QSMP", category: "ropa", price: 48.00, badge: "", image: "Imagenes/img15.jpg" },
+            { id: 9, name: "Gorro Negro exclusivo de la temporada II de QSMP", category: "ropa", price: 25.00, badge: "Nuevo", image: "Imagenes/img16.webp" },
+            { id: 10, name: "Coleccionable de Ramón", category: "coleccionables", price: 30.00, badge: "", image: "Imagenes/img17.webp" },
+            { id: 11, name: "Llavero de Pepino", category: "accesorios", price: 18.00, badge: "", image: "Imagenes/img18.webp" },
+            { id: 12, name: "Gorro de peluche Cucurucho con orejas moviles", category: "ropa", price: 28.00, badge: "Nuevo", image: "Imagenes/img2.webp" }
+        ];
+
+        function filterCatalog() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+            const sortOption = document.getElementById('sortSelect').value;
+
+            const checkedCategories = Array.from(document.querySelectorAll('.category-filter:checked'))
+                                            .map(cb => cb.value);
+
+            let filtered = catalogProducts.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchValue);
+                const matchesCategory = checkedCategories.length === 0 || checkedCategories.includes(product.category);
+                const matchesPrice = product.price >= minPrice && product.price <= maxPrice;
+
+                return matchesSearch && matchesCategory && matchesPrice;
+            });
+
+            if (sortOption === 'low-high') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortOption === 'high-low') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (sortOption === 'a-z') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            renderCatalog(filtered);
+        }
+
+        function renderCatalog(products) {
+            const grid = document.getElementById('catalog-grid');
+            const countLabel = document.getElementById('product-count');
+            grid.innerHTML = '';
+
+            countLabel.innerText = `Mostrando ${products.length} producto(s)`;
+
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="no-results"><h3>No se encontraron productos</h3><p>Intenta cambiar los filtros de búsqueda.</p></div>';
+                return;
+            }
+
+            products.forEach(p => {
+                const badgeHTML = p.badge ? `<div class="badge">${p.badge}</div>` : '';
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    ${badgeHTML}
+                    <img class="product-img" src="${p.image}" alt="${p.name}">
+                    <div class="product-info">
+                        <div>
+                            <h3 class="product-title">${p.name}</h3>
+                            <div class="product-price">$${p.price.toFixed(2)}</div>
+                        </div>
+                        <button class="add-btn" onclick="alert('¡${p.name} añadido al carrito!')">Agregar al Carrito</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            document.querySelectorAll('.category-filter').forEach(cb => cb.checked = false);
+            document.getElementById('sortSelect').value = 'featured';
+            filterCatalog();
+        }
+
+        filterCatalog();
+    </script>
+</body>
+</html>

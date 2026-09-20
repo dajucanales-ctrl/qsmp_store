@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QSMP Store - Merch Oficial</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #fdcb6e;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --danger: #ff7675;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent);
+        }
+
+        .cart-btn {
+            background-color: var(--primary);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .cart-btn:hover {
+            background-color: #5b4be2;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+        }
+
+        /* FILTROS Y CATEGOR¨ªAS */
+        .categories-section {
+            text-align: center;
+            padding: 2rem 1rem 1rem 1rem;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 1rem 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* GRID DE PRODUCTOS */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 2rem 20px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 220px;
+            background-color: #dfe6e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .product-category {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #b2bec3;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .buy-btn {
+            background-color: var(--dark);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .buy-btn:hover {
+            background-color: var(--primary);
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        /* MODAL CARRITO */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: flex-end;
+            z-index: 2000;
+        }
+
+        .cart-content {
+            background: white;
+            width: 400px;
+            height: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .cart-items {
+            overflow-y: auto;
+            flex-grow: 1;
+            margin: 1rem 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .close-cart {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a onclick="navigateTo('index.html')" class="logo">QSMP STORE &#129370;</a>
+        <nav>
+            <a onclick="navigateTo('index.html')" class="active">Inicio</a>
+            <a onclick="navigateTo('catalogo.html')">Catalogo</a>
+            <a onclick="navigateTo('federacion.html')">Federacion</a>
+            <a onclick="navigateTo('contacto.html')">Contacto</a>
+        </nav>
+        <button class="cart-btn" onclick="toggleCart()">Carrito (<span id="cart-count">0</span>)</button>
+    </header>
+
+    <section class="hero">
+        <h1>Merch Oficial del QSMP</h1>
+        <p>Lleva la aventura de la Isla, los Huevos y la Federacion a todas partes.</p>
+    </section>
+
+    <div class="categories-section">
+        <h2>Destacados por Categoria</h2>
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterProducts('all', event)">Todos</button>
+            <button class="filter-btn" onclick="filterProducts('ropa', event)">Ropa & Hoodies</button>
+            <button class="filter-btn" onclick="filterProducts('peluches', event)">Peluches & Huevos</button>
+            <button class="filter-btn" onclick="filterProducts('accesorios', event)">Accesorios</button>
+            <button class="filter-btn" onclick="filterProducts('federacion', event)">Especial Federaci¨®n</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="products-grid" id="product-grid"></div>
+    </div>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div>
+                <h2>Tu Carrito QSMP</h2>
+                <div class="cart-items" id="cartItems">
+                    <p>El carrito est¨¢ vac¨ªo.</p>
+                </div>
+            </div>
+            <div>
+                <h3>Total: $<span id="cartTotal">0.00</span></h3>
+                <button class="buy-btn" style="margin-top: 10px; background-color: var(--primary);" onclick="checkout()">Proceder al Pago</button>
+                <button class="close-cart" style="margin-top: 5px; width:100%;" onclick="toggleCart()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 QSMP Store - Concepto creado por fans.</p>
+        <p style="margin-top: 10px;">
+            <a onclick="navigateTo('index.html')">Inicio</a> 
+            <a onclick="navigateTo('catalogo.html')">Catalogo</a> 
+            <a onclick="navigateTo('federacion.html')">Federacion</a> 
+            <a onclick="navigateTo('contacto.html')">Contacto</a>
+        </p>
+    </footer>
+
+    <script>
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        const products = [
+            { id: 1, name: "Sudadera con capucha original QSMP Egg 1 - Tallulah, Richarlyson, Tilin", category: "ropa", price: 45.00, imagePath: "Imagenes/img1.png" },
+            { id: 2, name: "Gorro de peluche Cucurucho con orejas moviles", category: "ropa", price: 22.50, imagePath: "Imagenes/img2.webp" },
+            { id: 3, name: "Figura Coleccionable de Bobby", category: "peluches", price: 30.00, imagePath: "Imagenes/img3.webp" },
+            { id: 4, name: "Peluche de Cucurucho", category: "peluches", price: 35.00, imagePath: "Imagenes/mainpng.webp" },
+            { id: 5, name: "Llavero de Nacho", category: "accesorios", price: 10.00, imagePath: "Imagenes/img5.webp" },
+            { id: 6, name: "Globo QSMP", category: "accesorios", price: 8.50, imagePath: "Imagenes/img6.webp" },
+            { id: 7, name: "Gorro de Quackity QSMP", category: "ropa", price: 15.00, imagePath: "Imagenes/img7.webp" },
+            { id: 8, name: "Sudadera con capucha negra oficial de Cucurucho Land", category: "federacion", price: 28.00, imagePath: "Imagenes/img8.webp" }
+        ];
+
+        let cart = [];
+
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const filteredProducts = filter === 'all' 
+                ? products 
+                : products.filter(p => p.category === filter);
+
+            filteredProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                const fileName = product.imagePath.substring(product.imagePath.lastIndexOf('/') + 1);
+
+                card.innerHTML = `
+                    <div class="product-img">
+                        <img 
+                            src="${product.imagePath}" 
+                            alt="${product.name}" 
+                            onerror="this.onerror=null; this.parentNode.innerHTML='<span style=\\'font-size:0.8rem;text-align:center;\\'>[ Error al cargar: ${fileName} ]</span>';"
+                        />
+                    </div>
+                    <div class="product-info">
+                        <div>
+                            <span class="product-category">${product.category}</span>
+                            <h3 class="product-title">${product.name}</h3>
+                            <div class="product-price">$${product.price.toFixed(2)}</div>
+                        </div>
+                        <button class="buy-btn" onclick="addToCart(${product.id})">A?adir al Carrito</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterProducts(category, e) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (e && e.target) {
+                e.target.classList.add('active');
+            }
+            renderProducts(category);
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            cart.push(product);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const itemsContainer = document.getElementById('cartItems');
+            const totalContainer = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = '<p>El carrito est¨¢ vac¨ªo.</p>';
+                totalContainer.innerText = '0.00';
+                return;
+            }
+
+            itemsContainer.innerHTML = '';
+            let total = 0;
+            cart.forEach((item) => {
+                total += item.price;
+                itemsContainer.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.name}</span>
+                        <span>$${item.price.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            totalContainer.innerText = total.toFixed(2);
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function checkout() {
+            if(cart.length === 0) {
+                alert('Tu carrito est¨¢ vac¨ªo.');
+                return;
+            }
+            alert('?Gracias por tu compra! (Simulaci¨®n de pago completada)');
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
